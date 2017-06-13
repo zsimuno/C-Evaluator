@@ -4,7 +4,7 @@ class Zadatak
 {
 	protected $id, $naslovZadatka, $tekstZadatka, $output;
 
-	function __construct( $id, $naslovZadatka, $tekst_zadatka, $output )
+	function __construct( $id, $naslovZadatka, $tekstZadatka, $output )
 	{
 		$this->id = $id;
 		$this->naslovZadatka = $naslovZadatka;
@@ -17,3 +17,4 @@ class Zadatak
 }
 
 ?>
+
