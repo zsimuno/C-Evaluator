@@ -1,0 +1,5 @@
+Zadatak 8:
+Napišite program koji učitava prirodni broj n i ispisuje najveći prirodni broj m, manji ili jednak n, sa sljedećim svojstvima:
+broj m je potpun kvadrat nekog prirodnog broja, zadnja znamenka (jedinica) u dekadskom zapisu broja m je 9, pri dijeljenju
+broja m s 3 dobivamo ostatak 1. Ako takvog broja m nema, treba ispisati odgovarajuću poruku.
+Na primjer, za n = 200, rezultat je m = 169 = 13 2 . Najmanji broj s traženim svojstvima je 49 = 7 2 = 16 · 3 + 1.

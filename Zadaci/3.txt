@@ -1,0 +1,3 @@
+Zadatak 3:
+Za broj n ∈ N, Eulerova funkcija φ(n) definira se kao broj prirodnih brojeva u skupu {1, . . . , n} koji su relativno prosti s n.
+Napisati program koji će učitati prirodni broj n i ispisati vrijednost Eulerove funkcije od n.

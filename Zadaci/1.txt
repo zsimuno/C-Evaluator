@@ -1,0 +1,4 @@
+Zadatak 1:
+Za broj n ∈ N kažemo da je obilan ako je strogo manji od zbroja svojih djelitelja (izuzevši njega samog).
+Na primjer, 12 < 1 + 2 + 3 + 4 + 6 = 16, pa je 12 obilan broj, dok broj 16 > 1 + 2 + 4 + 8 = 15, nije obilan broj.
+Napišite program koji, za uneseni k ∈ N, ispisuje sve obilne brojeve manje ili jednake k.
