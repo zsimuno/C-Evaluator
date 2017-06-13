@@ -64,9 +64,12 @@ class adminController extends BaseController
          $this->registry->template->show( 'postaviZadatak_index' );
          return;
        }
-    /*preko EvaluatorService klase spremamo novo uneseni zad u bazu, preko templeta 
+    /*preko EvaluatorService klase spremamo novo uneseni zad u bazu, preko templeta
     ažuriramo listu svih zadataka za prikaz preko sviZadaci_index.php str (view)
-    te vraćamo korisnika na tu str*/
+    te vraćamo administratora na tu str*/
+    $main = ($_POST['mainUnos']);
+    $tekst_zadatka = ($_POST['tekstZadatka']);
+    $output = ($_POST['output']);
     $es = new EvaluatorService();
     $es->UbaciZadatak($main, $tekst_zadatka, $output)
 

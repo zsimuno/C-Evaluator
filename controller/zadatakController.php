@@ -1,14 +1,13 @@
 <?php
-//- ProvjeriZadatak() - Prima kod rješenja zadatka i šalje ga modelu
-//i vraća korisniku uspješnost (vrati na index) ili neuspješnost zadatka (ispiši otuput ili greške ispod koda)
+/* ProvjeriZadatak() - Prima rješenje zadatka i šalje ga modelu*/
 
 class ZadatakController extends BaseController
 {
 
-	//preko get dobiva id zadatka kojeg treba otvorit i uzima ga iz baze
+	/*preko get dobiva id zadatka kojeg treba otvorit i uzima ga iz baze*/
 	public function index()
 	{
-		//new EvaluatorService
+		$es = new EvaluatorService();
 
     if (isset($_GET['id']) && preg_match('/^[0-9]+$/', $_GET['id'])) //provjerit da je dobrog oblika
     {
@@ -19,28 +18,37 @@ class ZadatakController extends BaseController
 			exit();
     }
 
-		// Popuni template potrebnim podacima
-    $this->registry->template->zadatak = $ls->UzmiZadatakPrekoId($id);
+    $this->registry->template->zadatak = $es->UzmiZadatakPrekoId($id);
     $this->registry->template->show( 'zadatak_index' );
 	}
 
-	//Preko $_POST uzmi rješenje a preko $_GET uzmi id
 	function ProvjeriZadatak()
   {
-    if (isset($_GET['id']) && preg_match('/^[0-9]+$/', $_GET['id'])) //provjerit da je dobrog oblika
-    {
+		$es = new EvaluatorService();
+
+    if (isset($_GET['id']) && preg_match('/^[0-9]+$/', $_GET['id']))     {
       $id = $_GET['id'];
     }
     else {
-			//ovo vraćanje služi samo ako neki korisnik pokušava pristupiti nekom zadatku koji ne postoji
+			/*ako neki korisnik pokušava pristupiti zadatku koji ne postoji*/
       header('location: '.__SITE_URL.'/index.php');
 			exit();
     }
-
-    //posalji kod modelu i vrati output i ispisi ga
-
+    /*ako je poslan 'prazan kod' */
+		if (!(isset($_POST['kod']) && !empty($_POST['kod']))){
+			$this->registry->template->poruka = "Nije unesen kod!";
+			$this->registry->template->zadatak = $es->UzmiZadatakPrekoId($id);
+			$this->registry->template->show( 'zadatak_index' );
+			return;
+		}
+		$kod = $_POST['kod'];
+		/*ProvjeriRjesenje($id, $kod) za sada implementirana da vraća output;
+		pospremam ga u template i ostavljam na istoj str koja će taj output ispisati*/
+		$this->registry->template->output = $es->ProvjeriRjesenje($id, $kod);
+		$this->registry->template->show( 'zadatak_index' );
   }
 
 };
 
 ?>
+
