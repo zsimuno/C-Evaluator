@@ -1,13 +1,4 @@
 <?php
-/*
-- NoviZadatak()
-    - Prima tekst zadatka, main, output i šalje modelu
-      i vraća "Uspješno postavljeno" preko template-a (vraća na index)
-- AdminLogin()
-    - prima login podatke i šalje modelu
-      i vraća poruku jel uspješan (šalji na postavljanje zadatka)
-      il neuspješan login (vrati na login-page)
-*/
 
 class adminController extends BaseController
 {
@@ -17,19 +8,21 @@ class adminController extends BaseController
     $this->registry->template->show( 'login_index' );
   }
 
+  /*login za administratore*/
   function login()
   {
-
     if( ! ( isset($_POST['username']) && isset($_POST['password'])
             && !empty($_POST['username']) && !empty($_POST['password']) ) )
        {
-         $this->registry->template->message = "Neuspješan login";
          $this->registry->template->show( 'login_index' );
          return;
        }
 
-    $fs = new EvaluatorService();
-    $users = $fs -> UzmiSveAdmine();
+    /*user i pass uneseni, provjera ispravnosti; podaci o svim adminima
+    se dohvaćaju iz klase EvaluatorService; ukoliko nađe match sprema podatke u session*/
+
+    $es = new EvaluatorService();
+    $users = $es -> UzmiSveAdmine();
 
     foreach ($users as $user) {
       if($user->username === $_POST['username'] && password_verify( $_POST['password' ], $user->password ))
@@ -39,17 +32,19 @@ class adminController extends BaseController
       }
     }
 
-    // Ako nije uspjesan login onda vrati na login sa porukom da je neuspjesan
+    /*Ako session nije postavljen preko templatea ispisuje poruku i vraća ponovno na login str*/
     if(!isset($_SESSION['user']))
     {
       $this->registry->template->poruka = "Neuspješan login";
       $this->registry->template->show( 'login_index' );
       return;
     }
-    header( 'Location: ' . __SITE_URL . '/index.php' );
+    /*Inače (session postavljen) ispisuje poruku i vodi na str za postavljanje zadatka*/
+    $this->registry->template->poruka = "Uspješan login";
+    header( 'Location: ' . __SITE_URL . '/postaviZadatak_index.php' );
   }
 
-  // Unisti session i vrati na pocetnu stranicu
+  /*Unisti session i vrati na pocetnu stranicu*/
   function logout()
   {
     session_unset();
@@ -57,18 +52,29 @@ class adminController extends BaseController
     header( 'Location: ' . __SITE_URL . '/index.php' );
   }
 
-//  Prima tekst zadatka, main, output i šalje modelu
-//    i vraća "Uspješno postavljeno" preko template-a (vraća na index)
 
+/*prima podatke o novom zadatku, pomoću template-a šalje modelu na obradu (spremanje u bazu)*/
   function NoviZadatak()
   {
-    //primi preko post tekst_zadatka i output i posalji to modelu preko
+    /*sva polja forme moraju biti ispunjena*/
+    if( ! ( isset($_POST['mainUnos']) && isset($_POST['tekstZadatka']) && isset($_POST['output'])
+            && !empty($_POST['mainUnos']) && !empty($_POST['tekstZadatka']) && !empty($_POST['output']) ) )
+       {
+         $this->registry->template->poruka = "Za postavljanje zadatka potrebno je popuniti sva polja";
+         $this->registry->template->show( 'postaviZadatak_index' );
+         return;
+       }
+    /*preko EvaluatorService klase spremamo novo uneseni zad u bazu, preko templeta 
+    ažuriramo listu svih zadataka za prikaz preko sviZadaci_index.php str (view)
+    te vraćamo korisnika na tu str*/
+    $es = new EvaluatorService();
+    $es->UbaciZadatak($main, $tekst_zadatka, $output)
 
-    $fs = new EvaluatorService();
-    $fs->UbaciZadatak($main, $tekst_zadatka, $output)
+    $this->registry->template->zadatakList = $es->UzmiSveZadatke();
+    $this->registry->template->poruka = "Uspješno ubacivanje zadatka";
+    $this->registry->template->show( 'sviZadaci_index' );
 
-    // kad završi ubacivanje treba UzmiSveZadatke i to spremit u $zadatakList
-    // i u $poruka spremit "Uspješno ubacivanje zadatka"
   }
 
 };
+
