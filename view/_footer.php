@@ -1,8 +1,7 @@
-<tr class="bottom">
-  <td align="center"><nav>
+<div class="topandbottom">
+  <nav>
     <a class="nav" href="#top">Vrh</a>
-  </nav></td>
-  </tr>
-</table>
+  </nav>
+</div>
 </body>
 </html>

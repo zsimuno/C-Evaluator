@@ -2,23 +2,31 @@
 <html>
 <head>
 	<meta charset="utf8">
-	<title></title>
+	<title>C-Evaluator</title>
 	<link rel="stylesheet" href="<?php echo __SITE_URL;?>/css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+	<script src="script.js"></script>
 </head>
 <body>
 
-<table>
-<tr class="toptitle" id="top">
-	<th align="center">
-		<h1></h1>
-		<br><hr>
+<div class="topandbottom" id="top">
+		<h1>C-Evaluator</h1>
+		<br>
 		<nav>
 
-			<a class="nav" href="<?php echo __SITE_URL; ?>/forum.php?rt=subjects">Home</a>
+			<a class="nav" href="<?php echo __SITE_URL; ?>/index.php">Home</a>
 
-			<!--Ako je user ulogiran onda ispisi logout inače ispisi register i login-->
-			
+			<!--Ako je Admin ulogiran onda ispisi "Logout" i "Novi Zadatak" inače ispisi  "Login"-->
+			<?php if(isset($_SESSION['user'])) {  ?>
+			| <a class="nav" href="<?php echo __SITE_URL; ?>/index.php?rt=postaviZadatak">Novi Zadatak</a>
+			| <a class="nav" href="<?php echo __SITE_URL; ?>/index.php?rt=admin/logout">Log out</a>
+
+			<?php echo " ( ".$_SESSION['user']['username']." ) "; }
+
+			else { if(explode('/', $_GET['rt'])[0] !== "admin"){?>
+							| <a class="nav" href="<?php echo __SITE_URL; ?>/forum.php?rt=admin">Log in</a>
+
+			<?php }} ?>
 
 		</nav>
-	</th>
-</tr>
+</div>
