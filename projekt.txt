@@ -1,0 +1,34 @@
+App:
+- boot - Prepare_DB (PETAR)
+- ostalo kopirat
+
+Model: (PETAR)
+- Administrator (username, password)
+- Zadatak (Tekst_zadatka, main_datoteka, output)
+- EvaluatorService  
+	-Klasa koja prima podatke iz controlera (kod od rješenja), kompajlira i pokreće program te uspoređuje output 
+	 ili vraća greške ako nije dobar kod (NE ZABORAVIT STAVIT TIMEOUT zbog beskonaćnih petlji) (ZVONIMIR)
+	-(za ubacivanje novih zadataka) prima tekst_zadatka, main_datoteka, output od controllera 
+	 i sprema u bazu i stvara novu main datoteku i sprema lokalno (id foldera = id zadatka u bazi)
+	-prima username i password od administratora, uspoređuje sa podacima u bazi i vraća uspješan il neuspješan login
+	
+View: (EDUARD) 
+- Header (Veliki naslov stranice "C-Evaluator", Naslovna, Login) 		(ZVONIMIR)
+- Footer (povratak na vrh čiji ID ćemo postavit u header) 			(ZVONIMIR)
+- Index (samo zadaci i ponudi se koriniku da rješava) (ako se uspješno postavio ili riješio zadatak ispiši to)
+- Zadatak (veliki textarea, button "Pokreni", log (tablica sa outputom ili greškama u kodu), text zadatka, ispisati "Uspješno rješeno" ako je uspješno rješeno)
+- Login_page (klasika)
+- Postavljanje zadatka (3xtextarea - 1. za main, 2. text zadatka, 3. output, submit button)
+
+Controller: (MATEJA)
+- AdminController
+	- NoviZadatak() - Prima tekst zadatka, main, output i šalje modelu i vraća "Uspješno postavljeno" preko template-a 
+			  (vraća na index)
+	- AdminLogin() - prima login podatke i šalje modelu i vraća poruku jel uspješan (šalji na postavljanje zadatka) 
+			 il neuspješan login (vrati na login-page)
+- ZadatakController
+	- ProvjeriZadatak() - Prima kod rješenja zadatka i šalje ga modelu i vraća korisniku uspješnost (vrati na index) ili 		  neuspješnost zadatka (ispiši otuput ili greške ispod koda) 
+		
+CSS: (ZVONIMIR)
+- style.css
+
