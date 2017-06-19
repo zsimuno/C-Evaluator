@@ -100,11 +100,15 @@ class EvaluatorService
   catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
 
     $id = $st->fetch();
-  //radimo main datoteku
-    file_put_contents( $id + ".c", $main);
+
+    $include = "#include \"".$id."h\" "             //odgovrajući include
+
+    file_put_contents( "main/".$id.".c", $include);           //stavljamo odgovorajući include
+    file_put_contents("main/".$id.".c", "\n", FILE_APPEND);   //na to nadodjemo novi red i main
+    file_put_contents("main/".$id.".c", $main, FILE_APPEND);
 
   }
-  
+
   function ProvjeriRjesenje($idZadatka, $kod) // mozda u controlleru exec a ovdje samo output
   {
 
