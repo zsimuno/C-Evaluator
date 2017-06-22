@@ -12,12 +12,15 @@ if(isset($poruka)){
 
 <?php
 	// Lista ponuđenih zadataka
-	echo '<form action="' . __DIR__ . 'zadatak_index.php' . '" method="post">';
+	echo '<form action="' . __SITE_URL. '/index.php" method="get">';
 ?>
 	<tr>
 		<th>ID</th>
 		<th>Naslov zadatka</th>
 	</tr>
+	<!-- ovaj hidden omogućuje da se forma pošalje preko geta onako kako je zamišljeno tj rt=zadatak$id=id
+		Bez ovoga poziv nije bio dobar -->
+	<input type="hidden" name="rt" value="zadatak">
 <?php
 		foreach( $zadatakList as $row ){
 			echo '<tr>' .
@@ -25,7 +28,7 @@ if(isset($poruka)){
 			     // naslovZadatka je kraći opis zadatka.
 			     // Glavni opis, ono što se traži od korisnika, će biti ispisan u zadatak.php
 			     '<td>' . $row->naslovZadatka . '</td>' .
-			     '<td><button type="submit" name="'. $row->id .'">Odaberi!</button></td>' .
+			     '<td><button type="submit" name="id" value="'. $row->id .'">Odaberi!</button></td>' .
 			     '</tr>';
 		}
 ?>

@@ -49,7 +49,7 @@ class EvaluatorService
     $arr = array();
     while( $row = $st->fetch() )
     {
-      $arr[] = new Zadatak( $row['id'], $row['naslovZadatka'], $row['tekstZadatka'], $row['output'])
+      $arr[] = new Zadatak( $row['id'], $row['naslovZadatka'], $row['tekstZadatka'], $row['output']);
     }
 
     return $arr;
@@ -62,17 +62,18 @@ class EvaluatorService
     try
     {
       $db = DB::getConnection();
-      $st = $db->prepare( 'SELECT tekstZadatka FROM Zadaci WHERE id=:id' );
+      $st = $db->prepare( 'SELECT * FROM Zadaci WHERE id=:id' );
       $st->execute( array( 'id' => $id ) );
     }
     catch( PDOException $e ) { exit( 'PDO error #3' . $e->getMessage() ); }
 
-      $tekst = $st->fetch();
+      $row = $st->fetch();
+      $tekst = new Zadatak( $row['id'], $row['naslovZadatka'], $row['tekstZadatka'], $row['output']);
       if($st->rowCount() !== 1) return 0; //ne postoji taj zadatak
 
       return $tekst;
     }
-  }
+
 
 
 
@@ -90,29 +91,73 @@ class EvaluatorService
 		catch( PDOException $e ) { exit( 'PDO error #4 ' . $e->getMessage() ); }
 
 
-  //uzimamo id novoubačenog zadatka iz baze
-  try
-  {
-    $db = DB::getConnection();
-    $st = $db->prepare( 'SELECT id FROM Zadaci WHERE naslovZadatka=:naslovZadatka' );
-    $st->execute( array( 'naslovZadatka' => $naslovZadatka ) );
-  }
-  catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
+    //uzimamo id novoubačenog zadatka iz baze
+    try
+    {
+      $db = DB::getConnection();
+      $st = $db->prepare( 'SELECT id FROM Zadaci WHERE naslovZadatka=:naslovZadatka' );
+      $st->execute( array( 'naslovZadatka' => $naslovZadatka ) );
+    }
+    catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
 
-    $id = $st->fetch();
+      $id = $st->fetch()["id"];
 
-    $include = "#include \"".$id."h\" "             //odgovrajući include
+      $include = "#include \"".$id.".h\" ";             //odgovrajući include
 
-    file_put_contents( "main/".$id.".c", $include);           //stavljamo odgovorajući include
-    file_put_contents("main/".$id.".c", "\n", FILE_APPEND);   //na to nadodjemo novi red i main
-    file_put_contents("main/".$id.".c", $main, FILE_APPEND);
+      file_put_contents(__DIR__ ."/main/".$id.".c", $include);           //stavljamo odgovorajući include
+      file_put_contents(__DIR__ ."/main/".$id.".c", "\n", FILE_APPEND);   //na to nadodjemo novi red i main
+      file_put_contents(__DIR__ ."/main/".$id.".c", $main, FILE_APPEND);
 
   }
 
   function ProvjeriRjesenje($idZadatka, $kod) // mozda u controlleru exec a ovdje samo output
   {
+    $main = file_get_contents(__DIR__.'/main/'.$idZadatka . '.c');
+
+    //random niz znakova za naziv datoteke (ako zeli vise korisnika u istom trenutku rjesavat zadatke)
+    // Možda pametnije koristiti lokote (kod za lokote u komentarima na dnu file-a)
+    // $ime_datoteke = '';
+		// for( $i = 0; $i < 20; ++$i )
+		// 	$ime_datoteke .= chr( rand(0, 25) + ord( 'a' ) );
+    file_put_contents(__DIR__ . '/main/'. $idZadatka . ".h", $kod);
+
+    $output = shell_exec('gcc '.__DIR__.'/main/'.$idZadatka.'.c -o '.__DIR__.'/main/'.$idZadatka);
+
+    if( $output !== NULL ) //tu je bilo !empty($output) al bolje ovako
+    {
+      return $output;
+    }
+    else
+    {
+      // if(!chroot(getcwd())) //možda neće raditi jer nismo root korisnici
+      //   return "Ne mogu postaviti dobar root. Pokušajte ponovno!";
+      //postavit timeout !!! ulimit ne radi ako se ceka scanf (ulimit -t 3) preserve status mozda nije potreban?
+      //mozda kotristiti proc_open i slicne
+      //pitanje je hoće li ovaj chroot raditi s obzirom da nemamo root ovlasti (sudo?)
+      $output = shell_exec(__DIR__ . '/main/'.$idZadatka. '.exe'); // na serveru ce vjerojatno bit ./$ime_datoteke
+
+      if($output === NULL) return "Greška u pokretanju programa probajte ponovno";
+
+      try
+      {
+        $db = DB::getConnection();
+        $st = $db->prepare( 'SELECT output FROM Zadaci WHERE id=:id' );
+        $st->execute( array( 'id' => $idZadatka ) );
+      }
+      catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
+
+      $rjesenje_zad = $st->fetch()['output'];
+
+      //briše file-ove nakon odrađenog posla
+      // unlink($idZadatka.'.o');
+      // unlink($idZadatka.'.exe');
+
+      if($output === $rjesenje_zad) return "Rješenje je točno!"; //ili vratit jedinicu
+      else return "Pogrešno rješenje!"; //Ili vratit nulu
+    }
 
   }
+
 };
 
 

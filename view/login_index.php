@@ -1,11 +1,9 @@
 <?php require_once __SITE_PATH . '/view/_header.php'; ?>
 
-<tr><td class="posttitle">
-  Log in
-</td></tr>
+<h2>Log in</h2>
+
 
 <!-- Forma za logiranje na stranicu  -->
-<tr><td>
 <form class="" action="<?php echo __SITE_URL; ?>/index.php?rt=admin/login" method="post">
   <br>
   Username:<br>  <input type="text" name="username"><br>
@@ -14,7 +12,6 @@
 
 </form>
 <br>
-</td></tr>
 
 
 

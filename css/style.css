@@ -3,23 +3,13 @@ body{
   font-size: 22px;
 }
 
-/*table {
-  border-spacing: 0;
-  border-collapse: collapse;
-  width: 80%;
-  height: 100%;
-  margin-left: 10%;
-  padding: 10px 10px 10px 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
- }
  th, tr, td {
    padding: 10px 10px 10px 10px;
+ }*/
+ tr {
+   border: 1px solid black;
  }
- .username {
-   background-color: #E8EAF6;
-   border-top: solid 1px grey;
- }
- */
+
 
 
 .topandbottom {
@@ -27,13 +17,14 @@ body{
   padding: 10px 10px 10px 10px;
   color: white;
   text-align: center;
-  background-color: #3F51B5;
+  background-color: #283593;
 }
 
 h2 {
   text-align: left;
   color: white;
-  background-color: #5C6BC0; /* Mozda #E8EAF6 */
+  background-color: #3F51B5; /* Mozda #E8EAF6 */
+  padding-left: 2%;
 }
 
 textarea {
@@ -71,23 +62,23 @@ a:visited{
 }
 
 a:hover {
-    background-color: #1A237E;
-    color: white;
+  background-color: #1A237E;
+  color: white;
 }
 
 
 /* Buttoni_________*/
 input[type=submit], button {
-    background-color: #3F51B5;
-    border: none;
-    color: white;
-    padding: 5px 8px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+  margin-left: 5px;
+  background-color: #304FFE;
+  border: none;
+  color: white;
+  padding: 5px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
-input[type=submit]:hover, button {
-    background-color: #1A237E;
+input[type=submit]:hover, button:hover {
+  background-color: #1A237E;
 }
-

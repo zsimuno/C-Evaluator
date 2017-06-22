@@ -65,13 +65,13 @@ try
 																					 Napišite funkciju void obilan(int n) koja prima k ∈ N,i ispisuje sve obilne brojeve manje ili jednake k.
 																					 Neka između ispisanih brojeva bude jedan razmak(space).' ,
 											 'output'        => '12 18 20 24 30 36 40 42 48 54 56 60 66 70 72 78 80 84 88 90 96 100'
-										 ); //testni primjer obilan(100)
+										 )); //testni primjer obilan(100)
 
 	$st->execute( array( 'naslovZadatka' => 'Eulerova funkcija' ,
 											 'tekstZadatka'  => 'Za broj n ∈ N, Eulerova funkcija φ(n) definira se kao broj prirodnih brojeva u skupu {1, . . . , n} koji su relativno prosti s n.
 											 										 Napisati funkciju int Euler(int n) koja će prima prirodni broj n i vraća vrijednost Eulerove funkcije od n.' ,
 											 'output'        => '42 243 818'
-										 ); //testni primjeri Euler(100) Euler(900) Euler(1233)
+										 )); //testni primjeri Euler(100) Euler(900) Euler(1233)
 
 	$st->execute( array( 'naslovZadatka' => 'Potpun kvadrat' ,
 											 'tekstZadatka'  => 'Napišite funkciju int potpun_kvadrat(int n) gram koja prima prirodni broj n i vraća najveći prirodni broj m, manji ili jednak n, sa sljedećim svojstvima:
@@ -79,7 +79,7 @@ try
 																					 broja m s 3 dobivamo ostatak 1. Ako takvog broja m nema, treba vratiti -1.
 																					 Na primjer, za n = 200, rezultat je m = 169 = 13^2 . Najmanji broj s traženim svojstvima je 49 = 7^2 = 16 · 3 + 1.' ,
 											 'output'        => '-1 289 529'
-										 ); //testni primjeri potpun_kvadrat(10) potpun_kvadrat(500) potpun_kvadrat(1000)
+										 )); //testni primjeri potpun_kvadrat(10) potpun_kvadrat(500) potpun_kvadrat(1000)
 
 }
 catch( PDOException $e ) { exit( "PDO error #5: " . $e->getMessage() ); }

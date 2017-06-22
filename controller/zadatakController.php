@@ -9,7 +9,7 @@ class ZadatakController extends BaseController
 	{
 		$es = new EvaluatorService();
 
-    if (isset($_GET['id']) && preg_match('/^[0-9]+$/', $_GET['id'])) //provjerit da je dobrog oblika
+    if (isset($_GET['id'])) //&& preg_match('/^[0-9]+$/', $_GET['id'])) //provjerit da je dobrog oblika
     {
       $id = $_GET['id'];
     }
@@ -44,6 +44,7 @@ class ZadatakController extends BaseController
 		$kod = $_POST['kod'];
 		/*ProvjeriRjesenje($id, $kod) za sada implementirana da vraća output;
 		pospremam ga u template i ostavljam na istoj str koja će taj output ispisati*/
+		$this->registry->template->zadatak = $es->UzmiZadatakPrekoId($id);
 		$this->registry->template->output = $es->ProvjeriRjesenje($id, $kod);
 		$this->registry->template->show( 'zadatak_index' );
   }
@@ -51,4 +52,3 @@ class ZadatakController extends BaseController
 };
 
 ?>
-

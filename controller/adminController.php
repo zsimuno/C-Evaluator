@@ -8,6 +8,11 @@ class adminController extends BaseController
     $this->registry->template->show( 'login_index' );
   }
 
+  function postaviZadatak()
+  {
+    $this->registry->template->show( 'postaviZadatak_index' );
+  }
+
   /*login za administratore*/
   function login()
   {
@@ -41,7 +46,7 @@ class adminController extends BaseController
     }
     /*Inače (session postavljen) ispisuje poruku i vodi na str za postavljanje zadatka*/
     $this->registry->template->poruka = "Uspješan login";
-    header( 'Location: ' . __SITE_URL . '/postaviZadatak_index.php' );
+    $this->registry->template->show( 'postaviZadatak_index' );
   }
 
   /*Unisti session i vrati na pocetnu stranicu*/
@@ -57,10 +62,13 @@ class adminController extends BaseController
   function NoviZadatak()
   {
     /*sva polja forme moraju biti ispunjena*/
-    if( ! ( isset($_POST['mainUnos']) && isset($_POST['tekstZadatka']) && isset($_POST['output'])
-            && !empty($_POST['mainUnos']) && !empty($_POST['tekstZadatka']) && !empty($_POST['output']) ) )
+    if( ! ( isset($_POST['mainUnos']) && isset($_POST['tekstZadatka'])
+            && isset($_POST['output']) && isset($_POST['naslov'])
+            && !empty($_POST['mainUnos']) && !empty($_POST['tekstZadatka'])
+            && !empty($_POST['output']) && !empty($_POST['naslov'])  ) )
        {
-         $this->registry->template->poruka = "Za postavljanje zadatka potrebno je popuniti sva polja";
+         $this->registry->template->poruka = "Za postavljanje zadatka potrebno je popuniti sva polja"
+                .$_POST['tekstZadatka'].$_POST['mainUnos'].$_POST['output'].$_POST['naslov'];
          $this->registry->template->show( 'postaviZadatak_index' );
          return;
        }
@@ -68,10 +76,11 @@ class adminController extends BaseController
     ažuriramo listu svih zadataka za prikaz preko sviZadaci_index.php str (view)
     te vraćamo administratora na tu str*/
     $main = ($_POST['mainUnos']);
+    $naslov =( $_POST['naslov']);
     $tekst_zadatka = ($_POST['tekstZadatka']);
     $output = ($_POST['output']);
     $es = new EvaluatorService();
-    $es->UbaciZadatak($main, $tekst_zadatka, $output)
+    $es->UbaciZadatak($main, $naslov, $tekst_zadatka, $output);
 
     $this->registry->template->zadatakList = $es->UzmiSveZadatke();
     $this->registry->template->poruka = "Uspješno ubacivanje zadatka";
@@ -80,4 +89,3 @@ class adminController extends BaseController
   }
 
 };
-

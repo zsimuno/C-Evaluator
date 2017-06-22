@@ -13,12 +13,13 @@ if(isset($uspjeh)){
 
 // Tekst zadatka
 if(isset($zadatak)){
-	echo '<p class="opisZadatka">' . $zadatak . '</p>';
+	echo '<p class="opisZadatka">' . $zadatak->tekstZadatka . '</p>';
 }
 
 // Modificirati action forme
 ?>
-<form action="<?php __DIR__ . 'zadatak.php'?>" method="post">
+<form action="<?php echo __SITE_URL; ?>/index.php?rt=zadatak/ProvjeriZadatak
+														&id=<?php echo $zadatak->id; ?>" method="post">
 
 	<h2>Kôd</h2>
 
@@ -27,7 +28,7 @@ if(isset($zadatak)){
 	<button type="submit">Pokreni!</button>
 
 </form>
-
+<br>
 <?php
 
 // log (output zadatka / greške), na početku prazno
