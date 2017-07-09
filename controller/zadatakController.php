@@ -1,6 +1,15 @@
 <?php
 /* ProvjeriZadatak() - Prima rješenje zadatka i šalje ga modelu*/
 
+function sendJSONandExit( $message )
+{
+		// Kao izlaz skripte pošalji $message u JSON formatu i prekini izvođenje.
+		header( 'Content-type:application/json;charset=utf-8' );
+		echo json_encode( $message );
+		flush();
+		exit( 0 );
+}
+
 class ZadatakController extends BaseController
 {
 
@@ -8,6 +17,14 @@ class ZadatakController extends BaseController
 	public function index()
 	{
 		$es = new EvaluatorService();
+
+		// Za rješavanje zadataka potreban je login
+		if(!isset($_SESSION['user']))
+    {
+      $this->registry->template->poruka = "Za rješavanje zadataka potrebno se ulogirati!";
+      $this->registry->template->show( 'login_index' );
+      return;
+    }
 
     if (isset($_GET['id'])) //&& preg_match('/^[0-9]+$/', $_GET['id'])) //provjerit da je dobrog oblika
     {
@@ -44,9 +61,8 @@ class ZadatakController extends BaseController
 		$kod = $_POST['kod'];
 		/*ProvjeriRjesenje($id, $kod) za sada implementirana da vraća output;
 		pospremam ga u template i ostavljam na istoj str koja će taj output ispisati*/
-		$this->registry->template->zadatak = $es->UzmiZadatakPrekoId($id);
-		$this->registry->template->output = $es->ProvjeriRjesenje($id, $kod);
-		$this->registry->template->show( 'zadatak_index' );
+		$output = $es->ProvjeriRjesenje($id, $kod);
+		sendJSONandExit($output);
   }
 
 };

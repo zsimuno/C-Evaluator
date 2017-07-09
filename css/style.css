@@ -3,11 +3,32 @@ body{
   font-size: 22px;
 }
 
+/*table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 80%;
+  height: 100%;
+  margin-left: 10%;
+  padding: 10px 10px 10px 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+ }
+
+ .username {
+   background-color: #E8EAF6;
+   border-top: solid 1px grey;
+ }*/
+
  th, tr, td {
    padding: 10px 10px 10px 10px;
  }*/
  tr {
    border: 1px solid black;
+ }
+
+ .log {
+   background-color: #E8EAF6;
+   padding-top: 10px;
+   border-top: solid 1px grey;
  }
 
 

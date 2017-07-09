@@ -107,54 +107,84 @@ class EvaluatorService
       file_put_contents(__DIR__ ."/main/".$id.".c", $include);           //stavljamo odgovorajući include
       file_put_contents(__DIR__ ."/main/".$id.".c", "\n", FILE_APPEND);   //na to nadodjemo novi red i main
       file_put_contents(__DIR__ ."/main/".$id.".c", $main, FILE_APPEND);
-
   }
 
   function ProvjeriRjesenje($idZadatka, $kod) // mozda u controlleru exec a ovdje samo output
   {
-    $main = file_get_contents(__DIR__.'/main/'.$idZadatka . '.c');
+    //Otvaramo .h datoteku
+    $f = fopen( __DIR__ . '/main/'. $idZadatka . ".h", 'w' );
 
-    //random niz znakova za naziv datoteke (ako zeli vise korisnika u istom trenutku rjesavat zadatke)
-    // Možda pametnije koristiti lokote (kod za lokote u komentarima na dnu file-a)
-    // $ime_datoteke = '';
-		// for( $i = 0; $i < 20; ++$i )
-		// 	$ime_datoteke .= chr( rand(0, 25) + ord( 'a' ) );
-    file_put_contents(__DIR__ . '/main/'. $idZadatka . ".h", $kod);
-
-    $output = shell_exec('gcc '.__DIR__.'/main/'.$idZadatka.'.c -o '.__DIR__.'/main/'.$idZadatka);
-
-    if( $output !== NULL ) //tu je bilo !empty($output) al bolje ovako
+    // Pokušaj dobiti ekskluzivni lokot.
+    if( flock( $f, LOCK_EX ) )
     {
-      return $output;
+      // Dobili smo lokot. Sada smijemo zapisati nešto u datoteku.
+      file_put_contents(__DIR__ . '/main/'. $idZadatka . ".h", $kod);
+
+      // Kompajliranje
+      exec('gcc '.__DIR__.'/main/'.$idZadatka.'.c -o '.__DIR__.'/main/'.$idZadatka. ' 2>&1', $output);
+
+      if( !empty($output) ) // Vraca li kompajler output?
+      {
+        if(file_exists(__DIR__ . '/main/'.$idZadatka.'.exe'))
+          unlink(__DIR__ . '/main/'.$idZadatka.'.exe');
+
+        // Prije otključavanja, treba napraviti fflush.
+        fflush( $f );
+        // Otključamo lokot.
+        flock( $f, LOCK_UN );
+        // Zatvorimo datoteku.
+        fclose( $f );
+
+        return implode("<br>", $output);
+      }
+      else
+      {
+        // Pokretanje programa (Timeout od 3 sekunde)
+        $output = shell_exec('timeout 3s '.__DIR__ . '/main/'.$idZadatka);
+
+        if($output === NULL) // Program nema outputa
+        {
+          if(file_exists(__DIR__ . '/main/'.$idZadatka.'.exe'))
+            unlink(__DIR__ . '/main/'.$idZadatka.'.exe');
+
+          // Prije otključavanja, treba napraviti fflush.
+          fflush( $f );
+          // Otključamo lokot.
+          flock( $f, LOCK_UN );
+          // Zatvorimo datoteku.
+          fclose( $f );
+
+          return "Greška u pokretanju programa probajte ponovno".
+                 "<br>(Do ovoga može doći ako imate beskonačnih petlji u programu).<br> "
+                 .__DIR__ . '/main/'.$idZadatka.'.exe';
+        }
+
+        try
+        {
+          $db = DB::getConnection();
+          $st = $db->prepare( 'SELECT output FROM Zadaci WHERE id=:id' );
+          $st->execute( array( 'id' => $idZadatka ) );
+        }
+        catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
+
+        $rjesenje_zad = $st->fetch()['output'];
+
+        if(file_exists(__DIR__ . '/main/'.$idZadatka.'.exe'))
+          unlink(__DIR__ . '/main/'.$idZadatka.'.exe');
+
+        // Prije otključavanja, treba napraviti fflush.
+        fflush( $f );
+        // Otključamo lokot.
+        flock( $f, LOCK_UN );
+        // Zatvorimo datoteku.
+        fclose( $f );
+
+        if($output === $rjesenje_zad) return "Rješenje je točno!";
+        else return "Pogrešno rješenje! <br>Output je: <br>".$output;
+      }
     }
     else
-    {
-      // if(!chroot(getcwd())) //možda neće raditi jer nismo root korisnici
-      //   return "Ne mogu postaviti dobar root. Pokušajte ponovno!";
-      //postavit timeout !!! ulimit ne radi ako se ceka scanf (ulimit -t 3) preserve status mozda nije potreban?
-      //mozda kotristiti proc_open i slicne
-      //pitanje je hoće li ovaj chroot raditi s obzirom da nemamo root ovlasti (sudo?)
-      $output = shell_exec(__DIR__ . '/main/'.$idZadatka. '.exe'); // na serveru ce vjerojatno bit ./$ime_datoteke
-
-      if($output === NULL) return "Greška u pokretanju programa probajte ponovno";
-
-      try
-      {
-        $db = DB::getConnection();
-        $st = $db->prepare( 'SELECT output FROM Zadaci WHERE id=:id' );
-        $st->execute( array( 'id' => $idZadatka ) );
-      }
-      catch( PDOException $e ) { exit( 'PDO error #5' . $e->getMessage() ); }
-
-      $rjesenje_zad = $st->fetch()['output'];
-
-      //briše file-ove nakon odrađenog posla
-      // unlink($idZadatka.'.o');
-      // unlink($idZadatka.'.exe');
-
-      if($output === $rjesenje_zad) return "Rješenje je točno!"; //ili vratit jedinicu
-      else return "Pogrešno rješenje!"; //Ili vratit nulu
-    }
+     return "Problem sa datotekama!" ;
 
   }
 

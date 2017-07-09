@@ -25,15 +25,14 @@ if(isset($zadatak)){
 
 	<textarea name="kod" class="kod" placeholder="Ovdje unesite svoj kôd"></textarea>
 	<br/>
-	<button type="submit">Pokreni!</button>
+	<button class="posaljiZadatak" type="button">Pokreni!</button>
 
 </form>
 <br>
+
+
+<!-- log (output zadatka / greške), na početku prazno -->
+<p class="log"></p><br>
+
 <?php
-
-// log (output zadatka / greške), na početku prazno
-if(isset($output)){
-	echo '<p class="log">' . $output . '</p>';
-}
-
  require_once __SITE_PATH . '/view/_footer.php'; ?>

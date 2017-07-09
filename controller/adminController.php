@@ -46,7 +46,8 @@ class adminController extends BaseController
     }
     /*Inače (session postavljen) ispisuje poruku i vodi na str za postavljanje zadatka*/
     $this->registry->template->poruka = "Uspješan login";
-    $this->registry->template->show( 'postaviZadatak_index' );
+    $this->registry->template->zadatakList = $es->UzmiSveZadatke();
+    $this->registry->template->show( 'sviZadaci_index' );
   }
 
   /*Unisti session i vrati na pocetnu stranicu*/
